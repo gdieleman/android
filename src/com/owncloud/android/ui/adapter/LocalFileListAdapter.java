@@ -26,7 +26,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.owncloud.android.R;
+import com.owncloud.android.lib.common.utils.Log_OC;
+import com.owncloud.android.utils.BitmapUtils;
 import com.owncloud.android.utils.DisplayUtils;
+import com.owncloud.android.utils.MimetypeIconUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,10 +55,8 @@ public class LocalFileListAdapter extends RecyclerView.Adapter<LocalRecyclerView
     private File[] mFiles = null;
 
     public LocalFileListAdapter(File directory, Context context) {
-        setHasStableIds(true);
         mContext = context;
         swapDirectory(directory);
-        checkedFiles = new ArrayList<>();
     }
 
     @Override
@@ -99,26 +100,29 @@ public class LocalFileListAdapter extends RecyclerView.Adapter<LocalRecyclerView
 
             if (!file.isDirectory()) {
                 holder.fileIcon.setImageResource(R.drawable.file);
+            } else {
+                holder.fileIcon.setImageResource(R.drawable.ic_menu_archive);
+            }
 
+            if (!file.isDirectory()) {
                 holder.fileSizeV.setVisibility(View.VISIBLE);
                 holder.fileSizeV.setText(DisplayUtils.bytesToHumanReadable(file.length()));
 
                 holder.lastModV.setVisibility(View.VISIBLE);
                 holder.lastModV.setText(DisplayUtils.unixTimeToHumanReadable(file.lastModified()));
 
-                if(getCheckedFiles().contains(file.getAbsolutePath()))
-                {
-                    holder.checkBoxV.setImageResource(R.drawable.ic_checkbox_marked);
+                if (getCheckedFiles().contains(file.getAbsolutePath())) {
+                    holder.checkBoxV.setChecked(true);
                 } else {
-                    holder.checkBoxV.setImageResource(R.drawable.ic_checkbox_blank_outline);
+                    holder.checkBoxV.setChecked(false);
                 }
+
                 holder.checkBoxV.setVisibility(View.VISIBLE);
 
                 // get Thumbnail if file is image
                 // TODO : implement proper thumbnails / image handling
 
             } else {
-                holder.fileIcon.setImageResource(R.drawable.ic_menu_archive);
                 holder.fileSizeV.setVisibility(View.GONE);
                 holder.lastModV.setVisibility(View.GONE);
                 holder.checkBoxV.setVisibility(View.GONE);
@@ -129,6 +133,7 @@ public class LocalFileListAdapter extends RecyclerView.Adapter<LocalRecyclerView
             holder.favoriteIcon.setVisibility(View.GONE);
 
             holder.sharedIconV.setVisibility(View.GONE);
+            holder.sharedWithMeIconV.setVisibility(View.GONE);
         }
 
     }

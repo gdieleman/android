@@ -2,12 +2,15 @@ sudo: false
 language: android
 android:
   components:
+    - platform-tools
+    - tools
     - build-tools-23.0.3
     - android-23
     - android-22
     - android-19
+    - extra-android-m2repository
 script:
   - ./setup_env.sh gradle
-  - gradle clean
-  - gradle build
+  - ./gradlew clean
+  - ./gradlew build
   
